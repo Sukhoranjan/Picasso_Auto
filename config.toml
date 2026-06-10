@@ -1,0 +1,59 @@
+#DATA INPUT
+
+root_dir = "D:\\FOV1\\PAINT" #Example "E:\\AutosetupTEST1\\FOV_1\\PAINT" File Root Folder
+ext = "_1_MMStack_Pos0_1.ome.tif" #Example "_NDTiffStack.tif" or "_MMStack_Pos0_1.ome.tif" Generic File Suffix same for every channel name
+
+#Run Settings #Type python main.py help for commands, python main.py run-all to run all steps, python main.py localize to run only localize, then align, render and undrift can be run individually as well
+[run] 
+localize = true 
+undrift = true
+align = true
+render = true
+
+#LOCALIZATION SETTINGS
+[localize]
+fit_method = "lq-gpu"
+pixelsize = 130.0
+gradient_threshold = 5000
+box_side_length = 7
+camera_baseline = 100
+camera_sensitivity = 0.22
+camera_gain = 1
+quantum_efficiency = 1.0
+drift_segmentation = 0
+drive_type = "ssd" # Where data is stored, Change to "ssd" if running directly from a fast solid-state drive Staging is recommended as it is super fast compared to HDD
+# roi = [100, 200, 800, 1200]
+
+#UNDRIFTING SETTINGS
+[undrift]
+pixelsize = 130.0
+suffix = "_locs.hdf5"
+rcc_segmentation = 1000
+refinement_method = "gold"
+aim_segmentation = 1000
+aim_intersectdist = 0.1538
+aim_roiradius = 0.4615
+max_fiducial_ellipticity = 1.2
+drive_type = "hdd" # Change to "ssd" if running directly from a fast solid-state drive
+fiducial_roi_size = 150.0
+max_fiducials = 5 #Top Fiducials to be selected from the accepted fiducials that pass the ellipicity threshold
+
+#ALIGNMENT SETTINGS
+[align]
+pixelsize = 130.0
+channel_dirs = ["WGA", "SNA", "PHAL", "AAL", "PSA"]
+show_alignment = true
+merged_output_name = "merged_multicolor.hdf5"
+
+#RENDER SETTINGS JUST FOR VISUALISATION, DOES NOT AFFECT THE DATA
+[render]
+pixelsize = 130.0
+input_file = "merged_multicolor.hdf5"
+output_suffix = "_final_render.png"
+oversampling = 10
+blur_method = "gaussian_iso"
+min_blur_width = 0.1
+gamma = 0.9
+percentile_bounds = [1.0, 99.0]
+colors = ["magenta", "cyan", "yellow", "red", "green"]
+channel_labels = ["WGA", "SNA", "PHAL", "AAL", "PSA"]
